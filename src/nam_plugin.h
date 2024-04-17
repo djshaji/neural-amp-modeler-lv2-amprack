@@ -53,6 +53,7 @@ namespace NAM {
 
 	class Plugin {
 	public:
+		bool bypass ;
 		struct Ports {
 			const LV2_Atom_Sequence* control;
 			LV2_Atom_Sequence* notify;
@@ -61,6 +62,14 @@ namespace NAM {
 			float* input_level;
 			float* output_level;
 		};
+		
+		typedef enum _PORT {
+			INPUT,
+			OUTPUT,
+			LEVEL_IN,
+			LEVEL_OUT,
+			FILENAME
+		} PORT ;
 
 		Ports ports = {};
 
@@ -70,7 +79,8 @@ namespace NAM {
 		LV2_Log_Logger logger = {};
 		LV2_Worker_Schedule* schedule = nullptr;
 
-		::DSP* currentModel = nullptr;
+		//~ ::DSP* currentModel = nullptr;
+		std::unique_ptr<DSP> currentModel = nullptr;
 		std::string currentModelPath;
 		float prevDCInput = 0;
 		float prevDCOutput = 0;
@@ -80,6 +90,7 @@ namespace NAM {
 
 		bool initialize(double rate, const LV2_Feature* const* features) noexcept;
 		void process(uint32_t n_samples) noexcept;
+		void loadModel (std::string filename);
 
 		void write_current_path();
 

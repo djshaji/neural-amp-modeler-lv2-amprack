@@ -19,6 +19,7 @@ static LV2_Handle instantiate(const LV2_Descriptor*, double rate, const char*, c
 	try
 	{
 		auto nam = std::make_unique<NAM::Plugin>();
+		nam -> bypass = false;
 
 		if (nam->initialize(rate, features))
 		{
@@ -37,13 +38,35 @@ static void connect_port(LV2_Handle instance, uint32_t port, void* data)
 {
 	auto nam = static_cast<NAM::Plugin*>(instance);
 
-	*(reinterpret_cast<void**>(&nam->ports)+port) = data;
+	//~ *(reinterpret_cast<void**>(&nam->ports)+port) = data;
+	
+	switch (port) {
+		case NAM::Plugin::INPUT:
+			nam -> ports . audio_in  = (float *) data ;
+			break ;
+		case NAM::Plugin::OUTPUT:
+			nam -> ports.audio_out  = (float *)  data ;
+			break ;
+		case NAM::Plugin::LEVEL_IN:
+			nam -> ports.input_level  = (float *) data ;
+			break ;
+		case NAM::Plugin::LEVEL_OUT:
+			nam -> ports.output_level  = (float *) data ;
+			break ;
+		case NAM::Plugin::FILENAME:
+			nam -> currentModelPath = std::string ((char *) data);
+			nam -> loadModel (nam->currentModelPath);
+			break ;
+	}
+	
 }
 
 static void activate(LV2_Handle) {}
 
 static void run(LV2_Handle instance, uint32_t n_samples)
 {
+	if (static_cast<NAM::Plugin*>(instance)->bypass)
+		return;
 #ifdef DISABLE_DENORMALS	// Disable floating point denormals
 	std::fenv_t fe_state;
 	std::feholdexcept(&fe_state);
@@ -66,19 +89,11 @@ static void cleanup(LV2_Handle instance)
 
 static const void* extension_data(const char* uri)
 {
-	static const LV2_Options_Interface options = { NAM::Plugin::options_get, NAM::Plugin::options_set };
-	static const LV2_State_Interface   state   = { NAM::Plugin::save, NAM::Plugin::restore};
-	static const LV2_Worker_Interface  worker  = { NAM::Plugin::work, NAM::Plugin::work_response, NULL };
-
-	if (!strcmp(uri, LV2_OPTIONS__interface))
-		return &options;
-	if (!strcmp(uri, LV2_STATE__interface))
-		return &state;
-	if (!strcmp(uri, LV2_WORKER__interface))
-		return &worker;
-
+	// aaaarghhhhh drowning noises
+	
 	return NULL;
 }
+
 
 static const LV2_Descriptor descriptor =
 {
@@ -91,6 +106,7 @@ static const LV2_Descriptor descriptor =
 	cleanup,
 	extension_data
 };
+
 
 LV2_SYMBOL_EXPORT const LV2_Descriptor* lv2_descriptor(uint32_t index)
 {

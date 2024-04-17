@@ -17,64 +17,25 @@ namespace NAM {
 
 	Plugin::~Plugin()
 	{
-		delete currentModel;
+		//~ delete currentModel;
 	}
 
 	bool Plugin::initialize(double sampleRate, const LV2_Feature* const* features) noexcept
 	{
 		this->sampleRate = sampleRate;
-
-		// for fetching initial options, can be null
-		LV2_Options_Option* options = nullptr;
-
-		for (size_t i = 0; features[i]; ++i)
-		{
-			if (std::string(features[i]->URI) == std::string(LV2_URID__map))
-				map = static_cast<LV2_URID_Map*>(features[i]->data);
-			else if (std::string(features[i]->URI) == std::string(LV2_WORKER__schedule))
-				schedule = static_cast<LV2_Worker_Schedule*>(features[i]->data);
-			else if (std::string(features[i]->URI) == std::string(LV2_LOG__log))
-				logger.log = static_cast<LV2_Log_Log*>(features[i]->data);
-			else if (std::string(features[i]->URI) == std::string(LV2_OPTIONS__options))
-				options = static_cast<LV2_Options_Option*>(features[i]->data);
-		}
-	
-		lv2_log_logger_set_map(&logger, map);
-
-		if (!map)
-		{
-			lv2_log_error(&logger, "Missing required feature: `%s`", LV2_URID__map);
-
-			return false;
-		}
-
-		if (!schedule)
-		{
-			lv2_log_error(&logger, "Missing required feature: `%s`", LV2_WORKER__schedule);
-
-			return false;
-		}
-
-		lv2_atom_forge_init(&atom_forge, map);
-
-		uris.atom_Object = map->map(map->handle, LV2_ATOM__Object);
-		uris.atom_Float = map->map(map->handle, LV2_ATOM__Float);
-		uris.atom_Int = map->map(map->handle, LV2_ATOM__Int);
-		uris.atom_Path = map->map(map->handle, LV2_ATOM__Path);
-		uris.atom_URID = map->map(map->handle, LV2_ATOM__URID);
-		uris.bufSize_maxBlockLength = map->map(map->handle, LV2_BUF_SIZE__maxBlockLength);
-		uris.patch_Set = map->map(map->handle, LV2_PATCH__Set);
-		uris.patch_Get = map->map(map->handle, LV2_PATCH__Get);
-		uris.patch_property = map->map(map->handle, LV2_PATCH__property);
-		uris.patch_value = map->map(map->handle, LV2_PATCH__value);
-		uris.units_frame = map->map(map->handle, LV2_UNITS__frame);
-
-		uris.model_Path = map->map(map->handle, MODEL_URI);
-
-		if (options != nullptr)
-			options_set(this, options);
-
 		return true;
+	}
+	
+	void Plugin::loadModel (std::string filename) {
+		//~ if (currentModel != nullptr) {
+			//~ delete currentModel ;
+		//~ }
+		bypass = true ;
+		char f [1024] ;
+		strcpy (f, filename.c_str ());
+		currentModel = get_dsp (f);
+		currentModelPath = std::string (filename);
+		bypass = false ;
 	}
 
 	// runs on non-RT, can block or use [de]allocations
@@ -166,10 +127,10 @@ namespace NAM {
 		auto nam = static_cast<NAM::Plugin*>(instance);
 
 		// prepare reply for deleting old model
-		LV2FreeModelMsg reply = { kWorkTypeFree, nam->currentModel };
+		LV2FreeModelMsg reply ;//= { kWorkTypeFree, nam->currentModel };
 
 		// swap current model with new one
-		nam->currentModel = msg->model;
+		//~ nam->currentModel = msg->model;
 		nam->currentModelPath = msg->path;
 		assert(nam->currentModelPath.capacity() >= MAX_FILE_NAME + 1);
 
@@ -184,41 +145,6 @@ namespace NAM {
 
 	void Plugin::process(uint32_t n_samples) noexcept
 	{
-		lv2_atom_forge_set_buffer(&atom_forge, (uint8_t*)ports.notify, ports.notify->atom.size);
-		lv2_atom_forge_sequence_head(&atom_forge, &sequence_frame, uris.units_frame);
-
-		LV2_ATOM_SEQUENCE_FOREACH(ports.control, event)
-		{
-			if (event->body.type == uris.atom_Object)
-			{
-				const auto obj = reinterpret_cast<LV2_Atom_Object*>(&event->body);
-				if (obj->body.otype == uris.patch_Get)
-				{
-					write_current_path();
-				}
-				else if (obj->body.otype == uris.patch_Set)
-				{
-					const LV2_Atom* property = NULL;
-					const LV2_Atom* file_path = NULL;
-
-					lv2_atom_object_get(obj,
-					                    uris.patch_property, &property,
-					                    uris.patch_value, &file_path,
-					                    0);
-
-					if (property && property->type == uris.atom_URID &&
-						((const LV2_Atom_URID*)property)->body == uris.model_Path &&
-						file_path && file_path->type == uris.atom_Path &&
-						file_path->size > 0 && file_path->size < MAX_FILE_NAME)
-					{
-						LV2LoadModelMsg msg = { kWorkTypeLoad, {} };
-						memcpy(msg.path, file_path + 1, file_path->size);
-						schedule->schedule_work(schedule->handle, sizeof(msg), &msg);
-					}
-				}
-			}
-		}
-
 		float level;
 
 		// convert input level from db
