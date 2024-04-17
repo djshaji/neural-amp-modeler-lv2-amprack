@@ -14,8 +14,6 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	link_libraries(stdc++fs)
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	add_compile_definitions(NOMINMAX WIN32_LEAN_AND_MEAN)
-else()
-	message(FATAL_ERROR "Unrecognized Platform!")
 endif()
 
 set(NAM_LV2_ID http://github.com/mikeoliphant/neural-amp-modeler-lv2)
