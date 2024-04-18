@@ -278,6 +278,9 @@ NeuralAmpModelerLv2_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 NeuralAmpModelerLv2_SOURCE_DIR:STATIC=/home/djshaji/projects/neural-amp-modeler-lv2-amprack
 
+//Dependencies for the target
+neural_amp_modeler_LIB_DEPENDS:STATIC=general;log;
+
 
 ########################
 # INTERNAL cache entries

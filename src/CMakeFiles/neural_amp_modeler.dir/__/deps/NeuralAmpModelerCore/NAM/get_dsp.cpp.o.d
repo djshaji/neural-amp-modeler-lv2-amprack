@@ -959,4 +959,5 @@ src/CMakeFiles/neural_amp_modeler.dir/__/deps/NeuralAmpModelerCore/NAM/get_dsp.c
   /home/djshaji/Android/Sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1/clocale \
   /home/djshaji/projects/neural-amp-modeler-lv2-amprack/deps/NeuralAmpModelerCore/NAM/lstm.h \
   /home/djshaji/projects/neural-amp-modeler-lv2-amprack/deps/NeuralAmpModelerCore/NAM/convnet.h \
-  /home/djshaji/projects/neural-amp-modeler-lv2-amprack/deps/NeuralAmpModelerCore/NAM/wavenet.h
+  /home/djshaji/projects/neural-amp-modeler-lv2-amprack/deps/NeuralAmpModelerCore/NAM/wavenet.h \
+  /home/djshaji/Android/Sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/android/log.h

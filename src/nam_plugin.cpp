@@ -5,6 +5,13 @@
 
 #include "nam_plugin.h"
 #include <NAM/activations.h>
+#ifdef __ANDROID__
+    #include <android/log.h>
+    #define MODULE_NAME "NAM"
+    #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, MODULE_NAME, __VA_ARGS__)
+#else
+    #define LOGD(...) printf(__VA_ARGS__)
+#endif
 
 #define SMOOTH_EPSILON .0001f
 
@@ -31,9 +38,7 @@ namespace NAM {
 			//~ delete currentModel ;
 		//~ }
 		bypass = true ;
-		char f [1024] ;
-		strcpy (f, filename.c_str ());
-		currentModel = get_dsp (f);
+		currentModel = get_dsp (filename);
 		currentModelPath = std::string (filename);
 		bypass = false ;
 	}

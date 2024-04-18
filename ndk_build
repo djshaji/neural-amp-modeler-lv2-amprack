@@ -10,4 +10,5 @@ do
     make
     mv src/neural_amp_modeler.so libs/$ABI
 done
-echo $NDK
+#echo $NDK
+cp -rv libs/* ~/projects/amp-rack/app/src/main/jniLibs/
