@@ -6,5 +6,5 @@ CXX_DEFINES = -DDISABLE_DENORMALS -DDSP_SAMPLE_FLOAT -DNAM_SAMPLE_FLOAT -Dneural
 
 CXX_INCLUDES = -isystem /home/djshaji/projects/neural-amp-modeler-lv2-amprack/deps/eigen -isystem /home/djshaji/projects/neural-amp-modeler-lv2-amprack/deps/lv2/include -isystem /home/djshaji/projects/neural-amp-modeler-lv2-amprack/deps/NeuralAmpModelerCore -isystem /home/djshaji/projects/neural-amp-modeler-lv2-amprack/deps/json -isystem /home/djshaji/projects/neural-amp-modeler-lv2-amprack/deps/denormal
 
-CXX_FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -std=c++20 -flto=thin -fPIC -fvisibility=hidden -Wall
+CXX_FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -O3 -DNDEBUG  -std=c++20 -flto=thin -fPIC -fvisibility=hidden -Wall -Ofast
 
