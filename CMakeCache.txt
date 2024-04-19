@@ -239,8 +239,8 @@ CMAKE_STRIP:FILEPATH=/home/djshaji/Android/Sdk/ndk/26.1.10909125/toolchains/llvm
 //Path to a program.
 CMAKE_TAPI:FILEPATH=CMAKE_TAPI-NOTFOUND
 
-//No help, variable specified on the command line.
-CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=/home/djshaji/Android/Sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake
+//The CMake toolchain file
+CMAKE_TOOLCHAIN_FILE:FILEPATH=/home/djshaji/Android/Sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake
 
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
@@ -277,6 +277,9 @@ NeuralAmpModelerLv2_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 NeuralAmpModelerLv2_SOURCE_DIR:STATIC=/home/djshaji/projects/neural-amp-modeler-lv2-amprack
+
+//Enable architecture-specific optimizations
+USE_NATIVE_ARCH:BOOL=OFF
 
 //Dependencies for the target
 neural_amp_modeler_LIB_DEPENDS:STATIC=general;log;

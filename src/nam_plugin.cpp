@@ -29,7 +29,10 @@ namespace NAM {
 
 	bool Plugin::initialize(double sampleRate, const LV2_Feature* const* features) noexcept
 	{
+		if (sampleRate < 48000)
+			sampleRate = 48000 ; // aaarghhhhhhhh
 		this->sampleRate = sampleRate;
+		LOGD ("initialized at %f", sampleRate);
 		return true;
 	}
 	
@@ -38,8 +41,10 @@ namespace NAM {
 			//~ delete currentModel ;
 		//~ }
 		bypass = true ;
+		printf ("loading %s\n",  filename.c_str ()) ;
+
 		currentModel = get_dsp (filename);
-		currentModelPath = std::string (filename);
+		//~ currentModelPath = std::string (filename);
 		bypass = false ;
 	}
 

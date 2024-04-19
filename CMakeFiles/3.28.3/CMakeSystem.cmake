@@ -8,7 +8,7 @@ include("/home/djshaji/Android/Sdk/ndk/26.1.10909125/build/cmake/android.toolcha
 set(CMAKE_SYSTEM "Android-1")
 set(CMAKE_SYSTEM_NAME "Android")
 set(CMAKE_SYSTEM_VERSION "1")
-set(CMAKE_SYSTEM_PROCESSOR "aarch64")
+set(CMAKE_SYSTEM_PROCESSOR "x86_64")
 
 set(CMAKE_CROSSCOMPILING "TRUE")
 

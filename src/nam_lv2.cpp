@@ -14,12 +14,16 @@
 #include "nam_plugin.h"
 
 // LV2 Functions
-static LV2_Handle instantiate(const LV2_Descriptor*, double rate, const char*, const LV2_Feature* const* features
+static LV2_Handle instantiate(const LV2_Descriptor*, double _rate, const char*, const LV2_Feature* const* features
 ) {
 	try
 	{
 		auto nam = std::make_unique<NAM::Plugin>();
 		nam -> bypass = false;
+		unsigned long rate = _rate ;
+		if (rate < 48000)
+			rate = 48000 ; /// aaaarghhhhhhhh
+		nam -> sampleRate = rate ;
 
 		if (nam->initialize(rate, features))
 		{
@@ -37,7 +41,6 @@ static LV2_Handle instantiate(const LV2_Descriptor*, double rate, const char*, c
 static void connect_port(LV2_Handle instance, uint32_t port, void* data)
 {
 	auto nam = static_cast<NAM::Plugin*>(instance);
-
 	//~ *(reinterpret_cast<void**>(&nam->ports)+port) = data;
 	
 	switch (port) {
@@ -54,6 +57,9 @@ static void connect_port(LV2_Handle instance, uint32_t port, void* data)
 			nam -> ports.output_level  = (float *) data ;
 			break ;
 		case NAM::Plugin::FILENAME:
+		#ifndef __ANDROID__
+			return ;
+		#endif
 			nam -> currentModelPath = std::string ((char *) data);
 			nam -> loadModel (nam->currentModelPath);
 			break ;
@@ -61,12 +67,23 @@ static void connect_port(LV2_Handle instance, uint32_t port, void* data)
 	
 }
 
-static void activate(LV2_Handle) {}
+static void activate(LV2_Handle instance) {
+	#ifndef __ANDROID__
+	printf ("activate\n") ;
+		auto nam = static_cast<NAM::Plugin*>(instance);
+
+	nam -> currentModelPath = std::string ("/home/djshaji/projects/neural-amp-modeler-lv2-amprack/models/BossWN-feather.nam");
+	nam -> loadModel (nam->currentModelPath);
+	#endif
+}
 
 static void run(LV2_Handle instance, uint32_t n_samples)
 {
 	if (static_cast<NAM::Plugin*>(instance)->bypass)
 		return;
+
+//~ #define DISABLE_DENORMALS	// Disable floating point denormals
+
 #ifdef DISABLE_DENORMALS	// Disable floating point denormals
 	std::fenv_t fe_state;
 	std::feholdexcept(&fe_state);
