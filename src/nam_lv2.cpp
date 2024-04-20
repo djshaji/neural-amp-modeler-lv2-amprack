@@ -101,7 +101,7 @@ static void deactivate(LV2_Handle) {}
 
 static void cleanup(LV2_Handle instance)
 {
-	delete static_cast<NAM::Plugin*>(instance);
+	//~ delete static_cast<NAM::Plugin*>(instance);
 }
 
 static const void* extension_data(const char* uri)
