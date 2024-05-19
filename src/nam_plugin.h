@@ -64,11 +64,11 @@ namespace NAM {
 		};
 		
 		typedef enum _PORT {
-			INPUT,
-			OUTPUT,
-			LEVEL_IN,
-			LEVEL_OUT,
-			FILENAME
+			INPUT = 0,
+			OUTPUT = 1,
+			LEVEL_IN = 2,
+			LEVEL_OUT = 3,
+			FILENAME = 100
 		} PORT ;
 
 		Ports ports = {};
